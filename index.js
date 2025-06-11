@@ -35,6 +35,18 @@ async function run() {
             res.send(result);
         });
 
+        // get all categories
+        app.get("/categories", async (req, res) => {
+            const categories = await articlesCollection
+                .aggregate([
+                    { $group: { _id: "$category" } },
+                    { $sort: { _id: 1 } },
+                    { $project: { _id: 0, category: "$_id" } },
+                ])
+                .toArray();
+            res.send(categories.map((c) => c.category));
+        });
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log(
