@@ -29,10 +29,20 @@ async function run() {
         const database = client.db("thinkUp");
         const articlesCollection = database.collection("articles");
 
-        // get all articles
+        // get all articles and category wise articles
         app.get("/articles", async (req, res) => {
-            const result = await articlesCollection.find().toArray();
-            res.send(result);
+            try {
+                const category = req.query.category;
+                let query = {};
+                if (category) {
+                    query.category = category;
+                }
+                const result = await articlesCollection.find(query).toArray();
+                res.send(result);
+            } catch (error) {
+                console.error(error);
+                res.status(500).send({ error: "Failed to fetch articles" });
+            }
         });
 
         // get all categories
