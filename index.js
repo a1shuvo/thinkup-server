@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 3000;
 
 // Middleware
@@ -43,6 +43,18 @@ async function run() {
                 console.error(error);
                 res.status(500).send({ error: "Failed to fetch articles" });
             }
+        });
+
+        // get a single article
+        app.get("/article/:id", async (req, res) => {
+            const id = req.params.id;
+            const article = await articlesCollection.findOne({
+                _id: new ObjectId(id),
+            });
+            if (!article) {
+                return res.status(404).send({ message: "Article not found" });
+            }
+            res.send(article);
         });
 
         // get all categories
