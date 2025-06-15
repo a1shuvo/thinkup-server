@@ -28,6 +28,7 @@ async function run() {
         //  database and collections
         const database = client.db("thinkUp");
         const articlesCollection = database.collection("articles");
+        const commentsCollection = database.collection("comments");
 
         // get all articles and category wise articles
         app.get("/articles", async (req, res) => {
@@ -67,6 +68,34 @@ async function run() {
                 ])
                 .toArray();
             res.send(categories.map((c) => c.category));
+        });
+
+        // GET comments by article ID
+        app.get("/comments/:articleId", async (req, res) => {
+            const articleId = req.params.articleId;
+
+            try {
+                const comments = await commentsCollection
+                    .find({ article_id: articleId })
+                    .sort({ _id: -1 })
+                    .toArray();
+                res.send(comments);
+            } catch (error) {
+                console.error("Error fetching comments:", error);
+                res.status(500).send({ message: "Server error" });
+            }
+        });
+
+        // POST a comment
+        app.post("/comments", async (req, res) => {
+            const comment = req.body;
+            try {
+                const result = await commentsCollection.insertOne(comment);
+                res.send(result);
+            } catch (error) {
+                console.error("Error posting comment:", error);
+                res.status(500).send({ message: "Server error" });
+            }
         });
 
         // Send a ping to confirm a successful connection
