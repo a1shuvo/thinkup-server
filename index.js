@@ -98,6 +98,56 @@ async function run() {
             }
         });
 
+        // PATCH /article/like/:id
+        app.patch("/article/like/:id", async (req, res) => {
+            const articleId = req.params.id;
+            const userId = req.body.userId;
+
+            if (!userId) {
+                return res.status(400).send({ message: "User ID is required" });
+            }
+
+            const article = await articlesCollection.findOne({
+                _id: new ObjectId(articleId),
+            });
+
+            if (!article) {
+                return res.status(404).send({ message: "Article not found" });
+            }
+
+            const hasLiked = article.likedUsers?.includes(userId);
+
+            let updateQuery;
+            if (hasLiked) {
+                // Unlike
+                updateQuery = {
+                    $pull: { likedUsers: userId },
+                    $inc: { totalLikes: -1 },
+                };
+            } else {
+                // Like
+                updateQuery = {
+                    $addToSet: { likedUsers: userId },
+                    $inc: { totalLikes: 1 },
+                };
+            }
+
+            await articlesCollection.updateOne(
+                { _id: new ObjectId(articleId) },
+                updateQuery
+            );
+
+            const updatedArticle = await articlesCollection.findOne({
+                _id: new ObjectId(articleId),
+            });
+
+            res.send({
+                message: hasLiked ? "Unliked" : "Liked",
+                totalLikes: updatedArticle.totalLikes,
+                liked: !hasLiked,
+            });
+        });
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log(
