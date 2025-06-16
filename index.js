@@ -58,6 +58,18 @@ async function run() {
             res.send(article);
         });
 
+        // POST a article
+        app.post("/article", async (req, res) => {
+            const newArticle = req.body;
+            try {
+                const result = await articlesCollection.insertOne(newArticle);
+                res.send(result);
+            } catch (error) {
+                console.error("Error posting article:", error);
+                res.status(500).send({ message: "Server error" });
+            }
+        });
+
         // get all categories
         app.get("/categories", async (req, res) => {
             const categories = await articlesCollection
