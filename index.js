@@ -34,9 +34,13 @@ async function run() {
         app.get("/articles", async (req, res) => {
             try {
                 const category = req.query.category;
+                const author_id = req.query.author_id;
                 let query = {};
                 if (category) {
                     query.category = category;
+                }
+                if (author_id) {
+                    query.author_id = author_id;
                 }
                 const result = await articlesCollection.find(query).toArray();
                 res.send(result);
@@ -68,6 +72,31 @@ async function run() {
                 console.error("Error posting article:", error);
                 res.status(500).send({ message: "Server error" });
             }
+        });
+
+        // PUT/UPDATE a article
+        app.put("/article/:id", async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updatedArticle = req.body;
+            const updateDoc = {
+                $set: updatedArticle,
+            };
+            const result = await articlesCollection.updateOne(
+                filter,
+                updateDoc,
+                options
+            );
+            res.send(result);
+        });
+
+        // DELETE a article
+        app.delete("/article/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await articlesCollection.deleteOne(query);
+            res.send(result);
         });
 
         // get all categories
