@@ -34,27 +34,28 @@ Backend API for the ThinkUp platform managing articles, categories, comments, an
 
 1. Clone repo and install dependencies:
 
-```bash
-git clone <repo_url>
-npm install
-```
+    ```bash
+    git clone <repo_url>
+    npm install
+    ```
 
 2. Create .env file with:
 
-```bash
-PORT=3000
-MONGODB_URI=<your_mongodb_uri>
-FIREBASE_SERVICE_ACCOUNT='<firebase_service_account_json_string>'
-```
+    ```bash
+    PORT=3000
+    MONGODB_URI=<your_mongodb_uri>
+    FIREBASE_SERVICE_ACCOUNT='<firebase_service_account_json_string>'
+    ```
 
 3. Run server:
 
-```bash
-npm run dev
-```
+    ```bash
+    npm run dev
+    ```
 
 ## Authentication
 
 Use Firebase ID tokens in the Authorization: Bearer <token> header for protected routes.
 
-Made with ❤️ for ThinkUp
+
+<p align="center">Made with ❤️ for ThinkUp</p>
