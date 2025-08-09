@@ -1,105 +1,60 @@
 # ThinkUp Server
 
-ThinkUp Server is the backend API service for the ThinkUp platform — a content and community-driven application that manages articles, categories, comments, user interactions, and authentication using Firebase.
-
----
-
-## Table of Contents
-
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [API Endpoints](#api-endpoints)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [Running the Server](#running-the-server)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-
----
+Backend API for the ThinkUp platform managing articles, categories, comments, and user interactions with Firebase authentication.
 
 ## Features
 
-- Secure user authentication and authorization with Firebase Admin SDK
 - CRUD operations for articles
-- Pagination, filtering (by category), and searching articles by title
-- Categories management and retrieval
-- Comment system linked to articles
-- Like/unlike functionality for articles with user tracking
-- CORS enabled for frontend-backend integration
-- Express middleware for JSON parsing and request validation
-
----
+- Pagination, category filtering, and search
+- User authentication with Firebase Admin SDK
+- Article liking/unliking system
+- Comment management per article
+- Categories aggregation from articles
 
 ## Tech Stack
 
-- Node.js
-- Express.js
-- MongoDB (with native MongoDB driver)
-- Firebase Admin SDK (for authentication & token verification)
-- dotenv for environment variable management
-- CORS middleware
+- Node.js, Express.js
+- MongoDB (native driver)
+- Firebase Admin SDK
+- CORS, dotenv
 
----
+## API Overview
 
-## API Endpoints
+- `GET /articles` - List articles with optional filters (category, author_id, search) and pagination
+- `GET /article/:id` - Get single article
+- `POST /article` - Create article (auth required)
+- `PUT /article/:id` - Update article (auth required)
+- `DELETE /article/:id` - Delete article (auth required)
+- `PATCH /article/like/:id` - Like/unlike article (auth required)
+- `GET /categories` - List all categories
+- `GET /comments/:articleId` - Get comments for article
+- `POST /comments` - Add comment (auth required)
 
-### Articles
+## Setup
 
-- `GET /articles`  
-  Fetch articles with optional query params:
+1. Clone repo and install dependencies:
 
-  - `category` (string) — filter by category
-  - `author_id` (string) — filter articles by author (requires Firebase auth)
-  - `search` (string) — case-insensitive search in article title
-  - `page` (number, default 1) — pagination page number
-  - `limit` (number, default 9) — number of articles per page
+```bash
+git clone <repo_url>
+npm install
+```
 
-- `GET /article/:id`  
-  Fetch a single article by its ID.
+2. Create .env file with:
 
-- `POST /article`  
-  Create a new article. Requires Firebase authentication via Bearer token.
+```bash
+PORT=3000
+MONGODB_URI=<your_mongodb_uri>
+FIREBASE_SERVICE_ACCOUNT='<firebase_service_account_json_string>'
+```
 
-- `PUT /article/:id`  
-  Update an existing article by ID. Requires Firebase authentication.
+3. Run server:
 
-- `DELETE /article/:id`  
-  Delete an article by ID. Requires Firebase authentication.
+```bash
+npm run dev
+```
 
-- `PATCH /article/like/:id`  
-  Like or unlike an article. Requires Firebase authentication.  
-  Request body must contain `{ userId: string }`.
+## Authentication
 
-### Categories
+Use Firebase ID tokens in the Authorization: Bearer <token> header for protected routes.
 
-- `GET /categories`  
-  Retrieve all distinct article categories.
-
-### Comments
-
-- `GET /comments/:articleId`  
-  Get comments for a specific article.
-
-- `POST /comments`  
-  Post a new comment. Requires Firebase authentication.
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v16+ recommended)
-- [MongoDB](https://www.mongodb.com/) instance (local or cloud)
-- Firebase project with service account credentials
-- Git
-
-### Installation
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/a1shuvo/thinkup-server.git
-   cd thinkup-server
-   ```
+Made with ❤️ for ThinkUp
